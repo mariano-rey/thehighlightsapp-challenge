@@ -3,14 +3,12 @@ import { StyleSheet, View } from 'react-native';
 
 const styles = StyleSheet.create({
   head: {
-    // position: 'absolute',
+    position: 'absolute',
     backgroundColor: 'black',
-    // minWidth: 30,
     flex: 1,
-    height: 30,
   },
 });
 
 export default () => {
-  return <View style={styles.head} />;
+  return <View style={[styles.head, { top: 30 }]} />;
 };
