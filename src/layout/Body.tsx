@@ -1,11 +1,12 @@
-import React, { useCallback, useState } from 'react';
-import { Image, StyleSheet, View } from 'react-native';
-// import Snake from '../components/snake';
+import React, { useState } from 'react';
+import { StyleSheet, View } from 'react-native';
+import Food from '../components/Food';
+import CustomFlingGesture from '../components/gestureHandler/CustomFlingGesture';
+import Snake from '../components/snake';
+import { usePoints } from '../contexts/PointsContext';
 import { randomNumber } from '../utils/Maths';
 
-interface Props {
-  setPoints: React.Dispatch<React.SetStateAction<number>>;
-}
+export type IDirection = 'left' | 'right' | 'top' | 'down';
 
 const styles = StyleSheet.create({
   container: {
@@ -22,14 +23,6 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     flex: 1,
   },
-  food: {
-    height: 30,
-    width: 30,
-    alignSelf: 'center',
-  },
-  snake: {
-    backgroundColor: 'black',
-  },
 });
 
 const getRandomPosition = (): [number, number] => [
@@ -37,7 +30,10 @@ const getRandomPosition = (): [number, number] => [
   randomNumber(),
 ];
 
-export default ({ setPoints }: Props) => {
+export default () => {
+  const [direction, setDirection] = useState<IDirection>('left');
+  const { setPoints } = usePoints();
+
   const [[rowFood, columnFood], setFoodPosition] = useState<[number, number]>(
     getRandomPosition(),
   );
@@ -55,16 +51,15 @@ export default ({ setPoints }: Props) => {
         setPoints(acc => acc + 10);
         setFoodPosition(getRandomPosition());
       }
-      return <View key={columnNumber} style={[styles.square, styles.snake]} />;
-    } else if (isFoodPosition) {
       return (
-        <View key={columnNumber} style={styles.square}>
-          <Image
-            source={require('../assets/png/hamburger.png')}
-            style={styles.food}
-          />
-        </View>
+        <Snake
+          key={columnNumber}
+          direction={direction}
+          setPosition={setSnakePosition}
+        />
       );
+    } else if (isFoodPosition) {
+      return <Food key={columnNumber} />;
     }
     return <View key={columnNumber} style={styles.square} />;
   };
@@ -85,5 +80,9 @@ export default ({ setPoints }: Props) => {
     return rowsRender;
   };
 
-  return <View style={styles.container}>{renderColumnsRows(10, 10)}</View>;
+  return (
+    <CustomFlingGesture setDirection={setDirection}>
+      <View style={styles.container}>{renderColumnsRows(10, 10)}</View>
+    </CustomFlingGesture>
+  );
 };

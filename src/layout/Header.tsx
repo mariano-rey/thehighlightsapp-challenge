@@ -1,9 +1,6 @@
 import React from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
-
-interface Props {
-  points: number;
-}
+import { usePoints } from '../contexts/PointsContext';
 
 const styles = StyleSheet.create({
   container: {
@@ -21,7 +18,9 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ({ points }: Props) => {
+export default () => {
+  const { points } = usePoints();
+
   return (
     <View>
       <View style={styles.container}>

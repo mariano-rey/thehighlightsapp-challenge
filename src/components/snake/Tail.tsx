@@ -2,13 +2,12 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
 const styles = StyleSheet.create({
-  head: {
-    backgroundColor: 'black',
+  container: {
+    backgroundColor: 'grey',
     flex: 1,
-    borderRadius: 16,
   },
 });
 
-export default () => {
-  return <View style={styles.head} />;
+export default ({}) => {
+  return <View style={styles.container}></View>;
 };
