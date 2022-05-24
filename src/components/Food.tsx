@@ -1,12 +1,7 @@
 import React from 'react';
-import { Image, StyleSheet, View } from 'react-native';
+import { Image, StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
-  square: {
-    borderColor: 'green',
-    borderWidth: 0.5,
-    flex: 1,
-  },
   food: {
     height: 30,
     width: 30,
@@ -16,11 +11,9 @@ const styles = StyleSheet.create({
 
 export default () => {
   return (
-    <View style={styles.square}>
-      <Image
-        source={require('../assets/png/hamburger.png')}
-        style={styles.food}
-      />
-    </View>
+    <Image
+      source={require('../assets/png/hamburger.png')}
+      style={styles.food}
+    />
   );
 };

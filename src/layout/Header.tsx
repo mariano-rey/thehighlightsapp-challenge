@@ -3,7 +3,8 @@ import { Button, StyleSheet, Text, View } from 'react-native';
 import { usePoints } from '../contexts/PointsContext';
 
 const styles = StyleSheet.create({
-  container: {
+  container: { padding: 16 },
+  points: {
     height: 36,
     display: 'flex',
     flexDirection: 'row',
@@ -14,7 +15,6 @@ const styles = StyleSheet.create({
     borderBottomColor: 'black',
     borderBottomWidth: StyleSheet.hairlineWidth,
     marginTop: 8,
-    marginBottom: 8,
   },
 });
 
@@ -22,8 +22,8 @@ export default () => {
   const { points } = usePoints();
 
   return (
-    <View>
-      <View style={styles.container}>
+    <View style={styles.container}>
+      <View style={styles.points}>
         <Text style={styles.title}>Points: {points}</Text>
         <Button title="Restart" />
       </View>

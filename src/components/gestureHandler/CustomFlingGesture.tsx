@@ -6,20 +6,20 @@ import {
   HandlerStateChangeEvent,
   State,
 } from 'react-native-gesture-handler';
-import { IDirection } from '../../layout/Body';
+import { IDirection } from '../../layout/types';
 
 interface Props {
   children: ReactNode;
-  setDirection: React.Dispatch<React.SetStateAction<IDirection>>;
+  onMove: (newDirection: IDirection) => void;
 }
 
-export default ({ children, setDirection }: Props) => {
+export default ({ children, onMove }: Props) => {
   const onHandler = (
     event: HandlerStateChangeEvent<FlingGestureHandlerEventPayload>,
-    direction: IDirection,
+    newDirection: IDirection,
   ) => {
     if (event.nativeEvent.oldState === State.ACTIVE) {
-      setDirection(direction);
+      onMove(newDirection);
     }
   };
 

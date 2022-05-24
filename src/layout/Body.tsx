@@ -1,18 +1,21 @@
 import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
+import { useSharedValue } from 'react-native-reanimated';
 import Food from '../components/Food';
 import CustomFlingGesture from '../components/gestureHandler/CustomFlingGesture';
 import Snake from '../components/snake';
 import { usePoints } from '../contexts/PointsContext';
-import { randomNumber } from '../utils/Maths';
-
-export type IDirection = 'left' | 'right' | 'top' | 'down';
+import { isCorrectDirection } from '../utils/Direction';
+import { getRandomPosition } from '../utils/Maths';
+import { IDirection, IFood, ISnakePosition } from './types';
 
 const styles = StyleSheet.create({
   container: {
     borderWidth: 2,
     height: 400,
+    width: 400,
     flexDirection: 'column',
+    alignSelf: 'center',
   },
   row: {
     flex: 1,
@@ -25,51 +28,29 @@ const styles = StyleSheet.create({
   },
 });
 
-const getRandomPosition = (): [number, number] => [
-  randomNumber(),
-  randomNumber(),
-];
-
 export default () => {
   const [direction, setDirection] = useState<IDirection>('left');
   const { setPoints } = usePoints();
 
-  const [[rowFood, columnFood], setFoodPosition] = useState<[number, number]>(
+  const [{ columnFood, rowFood }, setFoodPosition] = useState<IFood>(
     getRandomPosition(),
   );
-  const [[rowSnake, columnSnake], setSnakePosition] = useState<
-    [number, number]
-  >(getRandomPosition());
-
-  const renderSnakeFood = (rowNumber: number, columnNumber: number) => {
-    const isSnakePosition =
-      rowNumber === rowSnake && columnNumber === columnSnake;
-    const isFoodPosition = rowNumber === rowFood && columnNumber === columnFood;
-
-    if (isSnakePosition) {
-      if (rowSnake === rowFood && columnSnake === columnFood) {
-        setPoints(acc => acc + 10);
-        setFoodPosition(getRandomPosition());
-      }
-      return (
-        <Snake
-          key={columnNumber}
-          direction={direction}
-          setPosition={setSnakePosition}
-        />
-      );
-    } else if (isFoodPosition) {
-      return <Food key={columnNumber} />;
-    }
-    return <View key={columnNumber} style={styles.square} />;
-  };
+  const snakePosition = useSharedValue<ISnakePosition>({
+    left: 15,
+    top: 0,
+  });
 
   const renderColumnsRows = (rows: number, columns: number) => {
     const rowsRender = [];
     for (let x = 0; x < rows; x++) {
       const columnsRender = [];
       for (let y = 0; y < columns; y++) {
-        columnsRender.push(renderSnakeFood(x, y));
+        const isFoodPosition = x === rowFood && y === columnFood;
+        columnsRender.push(
+          <View key={y} style={styles.square}>
+            {isFoodPosition && <Food />}
+          </View>,
+        );
       }
       rowsRender.push(
         <View key={x} style={styles.row}>
@@ -80,9 +61,44 @@ export default () => {
     return rowsRender;
   };
 
+  const onMove = (newDirection: IDirection) => {
+    if (isCorrectDirection(direction, newDirection)) {
+      setDirection(newDirection);
+
+      const toValue = 40;
+      let newPosition: ISnakePosition;
+      const { left, top } = snakePosition.value;
+      if (newDirection === 'down') {
+        const newTop = top < 360 ? top + toValue : 0;
+        newPosition = { left, top: newTop };
+      } else if (newDirection === 'top') {
+        const newTop = top >= toValue ? top - toValue : 360;
+        newPosition = { left, top: newTop };
+      } else if (newDirection === 'left') {
+        const newLeft = left >= toValue ? left - toValue : 375;
+        newPosition = { left: newLeft, top };
+      } else {
+        const newLeft = left < 375 ? left + toValue : 15;
+        newPosition = { left: newLeft, top };
+      }
+
+      const snakeRow = newPosition.top / 40;
+      const snakeColumn = (newPosition.left - 15) / 40;
+      if (snakeRow === rowFood && snakeColumn === columnFood) {
+        setPoints(acc => acc + 10);
+        setFoodPosition(getRandomPosition());
+      }
+
+      snakePosition.value = newPosition;
+    }
+  };
+
   return (
-    <CustomFlingGesture setDirection={setDirection}>
-      <View style={styles.container}>{renderColumnsRows(10, 10)}</View>
-    </CustomFlingGesture>
+    <View>
+      <CustomFlingGesture onMove={onMove}>
+        <View style={styles.container}>{renderColumnsRows(10, 10)}</View>
+      </CustomFlingGesture>
+      <Snake direction={direction} snakePosition={snakePosition} />
+    </View>
   );
 };

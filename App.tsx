@@ -6,16 +6,13 @@ import Body from './src/layout/Body';
 import Header from './src/layout/Header';
 
 const styles = StyleSheet.create({
-  container: { padding: 16 },
   gestureHandler: { flex: 1 },
 });
 
 const App = () => {
   return (
     <SafeAreaView>
-      <ScrollView
-        contentContainerStyle={styles.container}
-        contentInsetAdjustmentBehavior="automatic">
+      <ScrollView contentInsetAdjustmentBehavior="automatic">
         <PointsProvider>
           <Header />
           <GestureHandlerRootView style={styles.gestureHandler}>
