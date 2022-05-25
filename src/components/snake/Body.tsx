@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
   body: {
     height: 35,
     width: 35,
-    backgroundColor: 'black',
+    backgroundColor: 'lightgreen',
     position: 'absolute',
   },
 });
@@ -29,27 +29,29 @@ export default ({ direction, position, snakePosition }: Props) => {
     }
 
     const borderWidth = 20;
+    let headStyle = {};
     if (direction === 'left') {
-      return {
+      headStyle = {
         borderTopLeftRadius: borderWidth,
         borderBottomLeftRadius: borderWidth,
       };
     } else if (direction === 'right') {
-      return {
+      headStyle = {
         borderTopRightRadius: borderWidth,
         borderBottomRightRadius: borderWidth,
       };
     } else if (direction === 'top') {
-      return {
+      headStyle = {
         borderTopLeftRadius: borderWidth,
         borderTopRightRadius: borderWidth,
       };
     } else {
-      return {
+      headStyle = {
         borderBottomLeftRadius: borderWidth,
         borderBottomRightRadius: borderWidth,
       };
     }
+    return { ...headStyle, backgroundColor: 'green' };
   };
 
   return <Animated.View style={[styles.body, renderBorder(), springStyles]} />;

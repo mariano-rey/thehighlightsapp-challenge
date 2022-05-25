@@ -23,9 +23,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   square: {
-    borderColor: 'green',
-    borderWidth: 0.5,
-    borderStyle: 'dotted',
     flex: 1,
   },
 });
@@ -92,9 +89,7 @@ export default () => {
       }
 
       console.log(newPosition.top, newPosition.left);
-      snakePosition.value.pop();
-      const newArray = [newPosition, ...snakePosition.value];
-      snakePosition.value = newArray;
+      snakePosition.value = [newPosition, ...snakePosition.value.slice(0, -1)];
     }
   };
 
