@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React from 'react';
 import {
   Directions,
   FlingGestureHandler,
@@ -7,13 +7,9 @@ import {
   State,
 } from 'react-native-gesture-handler';
 import { IDirection } from '../../layout/types';
+import { ICustomGesture } from './types';
 
-interface Props {
-  children: ReactNode;
-  onMove: (newDirection: IDirection) => void;
-}
-
-export default ({ children, onMove }: Props) => {
+export default ({ children, onMove }: ICustomGesture) => {
   const onHandler = (
     event: HandlerStateChangeEvent<FlingGestureHandlerEventPayload>,
     newDirection: IDirection,

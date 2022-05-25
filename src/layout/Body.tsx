@@ -16,6 +16,7 @@ const styles = StyleSheet.create({
     width: 400,
     flexDirection: 'column',
     alignSelf: 'center',
+    position: 'relative',
   },
   row: {
     flex: 1,
@@ -24,6 +25,7 @@ const styles = StyleSheet.create({
   square: {
     borderColor: 'green',
     borderWidth: 0.5,
+    borderStyle: 'dotted',
     flex: 1,
   },
 });
@@ -35,10 +37,7 @@ export default () => {
   const [{ columnFood, rowFood }, setFoodPosition] = useState<IFood>(
     getRandomPosition(),
   );
-  const snakePosition = useSharedValue<ISnakePosition>({
-    left: 15,
-    top: 0,
-  });
+  const snakePosition = useSharedValue<ISnakePosition>({ left: 0, top: 0 });
 
   const renderColumnsRows = (rows: number, columns: number) => {
     const rowsRender = [];
@@ -66,29 +65,32 @@ export default () => {
       setDirection(newDirection);
 
       const toValue = 40;
+      const minValue = 0;
+      const maxValue = 360;
       let newPosition: ISnakePosition;
       const { left, top } = snakePosition.value;
       if (newDirection === 'down') {
-        const newTop = top < 360 ? top + toValue : 0;
+        const newTop = top < maxValue ? top + toValue : minValue;
         newPosition = { left, top: newTop };
       } else if (newDirection === 'top') {
-        const newTop = top >= toValue ? top - toValue : 360;
+        const newTop = top >= toValue ? top - toValue : maxValue;
         newPosition = { left, top: newTop };
       } else if (newDirection === 'left') {
-        const newLeft = left >= toValue ? left - toValue : 375;
+        const newLeft = left >= toValue ? left - toValue : maxValue;
         newPosition = { left: newLeft, top };
       } else {
-        const newLeft = left < 375 ? left + toValue : 15;
+        const newLeft = left < maxValue ? left + toValue : minValue;
         newPosition = { left: newLeft, top };
       }
 
-      const snakeRow = newPosition.top / 40;
-      const snakeColumn = (newPosition.left - 15) / 40;
+      const snakeRow = newPosition.top / toValue;
+      const snakeColumn = newPosition.left / toValue;
       if (snakeRow === rowFood && snakeColumn === columnFood) {
         setPoints(acc => acc + 10);
         setFoodPosition(getRandomPosition());
       }
 
+      console.log(newPosition.top, newPosition.left);
       snakePosition.value = newPosition;
     }
   };
@@ -96,9 +98,11 @@ export default () => {
   return (
     <View>
       <CustomFlingGesture onMove={onMove}>
-        <View style={styles.container}>{renderColumnsRows(10, 10)}</View>
+        <View style={styles.container}>
+          {renderColumnsRows(10, 10)}
+          <Snake direction={direction} snakePosition={snakePosition} />
+        </View>
       </CustomFlingGesture>
-      <Snake direction={direction} snakePosition={snakePosition} />
     </View>
   );
 };

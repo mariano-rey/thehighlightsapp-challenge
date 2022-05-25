@@ -1,28 +1,22 @@
 import React from 'react';
 import { StyleProp, StyleSheet, ViewStyle } from 'react-native';
 import Animated, {
-  SharedValue,
   useAnimatedStyle,
   withTiming,
 } from 'react-native-reanimated';
 import { usePoints } from '../../contexts/PointsContext';
-import { IDirection, ISnakePosition } from '../../layout/types';
-
-interface Props {
-  direction: IDirection;
-  snakePosition: SharedValue<ISnakePosition>;
-}
+import { ISnake } from './types';
 
 const styles = StyleSheet.create({
-  head: {
-    backgroundColor: 'black',
-    position: 'absolute',
+  commons: {
     height: 35,
     width: 35,
+    backgroundColor: 'black',
+    position: 'absolute',
   },
 });
 
-export default ({ direction, snakePosition }: Props) => {
+export default ({ direction, snakePosition }: ISnake) => {
   const { points } = usePoints();
 
   const springStyles = useAnimatedStyle(() => ({
@@ -55,5 +49,23 @@ export default ({ direction, snakePosition }: Props) => {
     }
   };
 
-  return <Animated.View style={[styles.head, renderBorder(), springStyles]} />;
+  const renderSnake = () => {
+    const snake = [
+      <Animated.View
+        key="head"
+        style={[styles.commons, renderBorder(), springStyles]}
+      />,
+    ];
+    // for (let i = 0; i < points / 10; i++) {
+    //   snake.push(
+    //     <Animated.View
+    //       key={`body-${i}`}
+    //       style={[styles.commons, springStyles]}
+    //     />,
+    //   );
+    // }
+    return snake;
+  };
+
+  return <>{renderSnake()}</>;
 };

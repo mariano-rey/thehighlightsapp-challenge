@@ -19,13 +19,13 @@ const styles = StyleSheet.create({
 });
 
 export default () => {
-  const { points } = usePoints();
+  const { points, setPoints } = usePoints();
 
   return (
     <View style={styles.container}>
       <View style={styles.points}>
         <Text style={styles.title}>Points: {points}</Text>
-        <Button title="Restart" />
+        <Button title="Restart" onPress={() => setPoints(0)} />
       </View>
       <View style={styles.divider} />
     </View>
