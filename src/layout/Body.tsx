@@ -37,7 +37,7 @@ export default () => {
   const [{ columnFood, rowFood }, setFoodPosition] = useState<IFood>(
     getRandomPosition(),
   );
-  const snakePosition = useSharedValue<ISnakePosition>({ left: 0, top: 0 });
+  const snakePosition = useSharedValue<ISnakePosition[]>([{ left: 0, top: 0 }]);
 
   const renderColumnsRows = (rows: number, columns: number) => {
     const rowsRender = [];
@@ -68,7 +68,7 @@ export default () => {
       const minValue = 0;
       const maxValue = 360;
       let newPosition: ISnakePosition;
-      const { left, top } = snakePosition.value;
+      const { left, top } = snakePosition.value[0];
       if (newDirection === 'down') {
         const newTop = top < maxValue ? top + toValue : minValue;
         newPosition = { left, top: newTop };
@@ -88,10 +88,13 @@ export default () => {
       if (snakeRow === rowFood && snakeColumn === columnFood) {
         setPoints(acc => acc + 10);
         setFoodPosition(getRandomPosition());
+        snakePosition.value.push(snakePosition.value[0]);
       }
 
       console.log(newPosition.top, newPosition.left);
-      snakePosition.value = newPosition;
+      snakePosition.value.pop();
+      const newArray = [newPosition, ...snakePosition.value];
+      snakePosition.value = newArray;
     }
   };
 
