@@ -1,4 +1,5 @@
 import React, { createContext, ReactNode, useContext, useState } from 'react';
+import { useHighscores } from './HighscoresContext';
 
 interface Props {
   children: ReactNode;
@@ -18,8 +19,13 @@ const PointsProvider = ({ children }: Props) => {
 
 export const usePoints = () => {
   const [points, setPoints] = useContext(PointsContext);
+  const { handleHighscores } = useHighscores();
+
   const handleEat = () => setPoints(acc => acc + 10);
-  const reset = () => setPoints(0);
+  const reset = () => {
+    handleHighscores(points);
+    setPoints(0);
+  };
 
   return { points, handleEat, reset };
 };

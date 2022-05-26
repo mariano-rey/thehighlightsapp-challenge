@@ -7,10 +7,11 @@ interface Props {
 }
 
 export default ({ onClick }: Props) => {
-  const { reset } = usePoints();
+  const { points, reset } = usePoints();
 
   return (
     <Button
+      disabled={points === 0}
       title="Restart"
       onPress={() => {
         reset();

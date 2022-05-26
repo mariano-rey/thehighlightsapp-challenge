@@ -1,6 +1,7 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Button, StyleSheet, Text, View } from 'react-native';
 import RestartButton from '../components/UI/RestartButton';
+import { useHighscores } from '../contexts/HighscoresContext';
 import { usePoints } from '../contexts/PointsContext';
 
 const styles = StyleSheet.create({
@@ -21,11 +22,13 @@ const styles = StyleSheet.create({
 
 export default () => {
   const { points } = usePoints();
+  const { clear } = useHighscores();
 
   return (
     <View style={styles.container}>
       <View style={styles.points}>
         <Text style={styles.title}>Points: {points}</Text>
+        <Button title="Clear scores" onPress={() => clear()} />
         <RestartButton />
       </View>
       <View style={styles.divider} />
