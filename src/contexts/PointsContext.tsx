@@ -18,7 +18,10 @@ const PointsProvider = ({ children }: Props) => {
 
 export const usePoints = () => {
   const [points, setPoints] = useContext(PointsContext);
-  return { points, setPoints };
+  const handleEat = () => setPoints(acc => acc + 10);
+  const reset = () => setPoints(0);
+
+  return { points, handleEat, reset };
 };
 
 export default PointsProvider;

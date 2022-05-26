@@ -7,6 +7,7 @@ import Snake from '../components/snake';
 import { usePoints } from '../contexts/PointsContext';
 import { isCorrectDirection } from '../utils/Direction';
 import { getRandomPosition } from '../utils/Maths';
+import GameOver from './GameOver';
 import { IDirection, IFood, ISnakePosition } from './types';
 
 const styles = StyleSheet.create({
@@ -28,8 +29,9 @@ const styles = StyleSheet.create({
 });
 
 export default () => {
+  const [modalOpen, setModalOpen] = useState(false);
   const [direction, setDirection] = useState<IDirection>('left');
-  const { setPoints } = usePoints();
+  const { reset, handleEat } = usePoints();
 
   const [{ columnFood, rowFood }, setFoodPosition] = useState<IFood>(
     getRandomPosition(),
@@ -80,16 +82,24 @@ export default () => {
         newPosition = { left: newLeft, top };
       }
 
-      const snakeRow = newPosition.top / toValue;
-      const snakeColumn = newPosition.left / toValue;
-      if (snakeRow === rowFood && snakeColumn === columnFood) {
-        setPoints(acc => acc + 10);
-        setFoodPosition(getRandomPosition());
-        snakePosition.value.push(snakePosition.value[0]);
+      if (
+        snakePosition.value.some(
+          x => x.left === newPosition.left && x.top === newPosition.top,
+        )
+      ) {
+        reset();
+        setModalOpen(true);
+      } else {
+        const snakeRow = newPosition.top / toValue;
+        const snakeColumn = newPosition.left / toValue;
+        if (snakeRow === rowFood && snakeColumn === columnFood) {
+          handleEat();
+          setFoodPosition(getRandomPosition());
+        } else {
+          snakePosition.value.pop();
+        }
+        snakePosition.value = [newPosition, ...snakePosition.value];
       }
-
-      console.log(newPosition.top, newPosition.left);
-      snakePosition.value = [newPosition, ...snakePosition.value.slice(0, -1)];
     }
   };
 
@@ -101,6 +111,7 @@ export default () => {
           <Snake direction={direction} snakePosition={snakePosition} />
         </View>
       </CustomFlingGesture>
+      <GameOver open={modalOpen} setOpen={setModalOpen} />
     </View>
   );
 };

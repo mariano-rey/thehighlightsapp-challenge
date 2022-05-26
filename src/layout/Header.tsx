@@ -1,5 +1,6 @@
 import React from 'react';
-import { Button, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+import RestartButton from '../components/UI/RestartButton';
 import { usePoints } from '../contexts/PointsContext';
 
 const styles = StyleSheet.create({
@@ -19,13 +20,13 @@ const styles = StyleSheet.create({
 });
 
 export default () => {
-  const { points, setPoints } = usePoints();
+  const { points } = usePoints();
 
   return (
     <View style={styles.container}>
       <View style={styles.points}>
         <Text style={styles.title}>Points: {points}</Text>
-        <Button title="Restart" onPress={() => setPoints(0)} />
+        <RestartButton />
       </View>
       <View style={styles.divider} />
     </View>
